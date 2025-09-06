@@ -1,0 +1,26 @@
+{
+  "name": "cse341",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000c\u0000s\u0000e\u00003\u00004\u00001\u0000\r\u0000 \u0000",
+  "homepage": "https://github.com/Matt-B-Anderson/cse341#readme",
+  "bugs": {
+    "url": "https://github.com/Matt-B-Anderson/cse341/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Matt-B-Anderson/cse341.git"
+  },
+  "license": "ISC",
+  "author": "Matthew Anderson",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "mongodb": "^6.19.0"
+  }
+}
