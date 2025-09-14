@@ -5,10 +5,20 @@
     "description": "Contacts API",
     "version": "1.0.0"
   },
-  "host": "https://cse341-o8bq.onrender.com",
+  "host": "cse341-o8bq.onrender.com",
   "basePath": "/",
   "schemes": "[https]",
   "paths": {
+    "/api-docs": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/contacts/": {
       "get": {
         "description": "",
