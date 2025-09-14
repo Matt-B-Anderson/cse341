@@ -2,21 +2,21 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
 const mongodb = require('./db/connect');
-const professionalRoutes = require('./routes/professional');
-const contactRoutes = require('./routes/contacts');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 
 const port = process.env.PORT || 8080;
 const app = express();
 
 app
-  .use(bodyParser.json())
-  .use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    console.log(req.method, req.originalUrl);
-    next();
-  })
-  .use('/professional', professionalRoutes)
-  .use('/contacts', contactRoutes)
+    .use('./api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+    .use(bodyParser.json())
+    .use((req, res, next) => {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        console.log(req.method, req.originalUrl);
+        next();
+    })
+    .use('/', require('./routes'));
 
 mongodb.initDb((err, mongodb) => {
   if (err) {
