@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.router();
+const router = express.Router();
 const movieRatingController = require('../controllers/movieRating');
 
 router.get('/', movieRatingController.getAll);
