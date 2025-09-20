@@ -67,7 +67,7 @@ const updateMovieRating = async (req, res, next) => {
 		const result = await mongodb
 			.getDb()
 			.db()
-			.collection("contacts")
+			.collection("movie-ratings")
 			.replaceOne({ _id: new ObjectId(id) }, movieRating);
 
 		if (!result.acknowledged) {
@@ -88,7 +88,7 @@ const deleteMovieRating = async (req, res, next) => {
 		const result = await mongodb
 			.getDb()
 			.db()
-			.collection("movie-rating")
+			.collection("movie-ratings")
 			.deleteOne({ _id: new ObjectId(id) });
 
 		if (result.deletedCount === 0) {
