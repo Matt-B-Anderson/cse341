@@ -4,9 +4,9 @@ const mongodb = require('./db/connect');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const cors = require('cors');
-const passport = require('passport');
 const session = require('express-session');
-const GitHubStrategy = require('passport-github2').Strategy;
+const MongoStore = require('connect-mongo');
+const passport = require('./auth');
 
 const port = process.env.PORT || 8080;
 const app = express();
@@ -15,10 +15,11 @@ app
     .use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
     .use(bodyParser.json())
     .use(session({
-      secret: 'secret',
-      resave: false,
-      saveUninitialized: true,
-    }))
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI })
+  }))
     .use(passport.initialize())
     .use(passport.session())
     .use(cors({methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH']}))

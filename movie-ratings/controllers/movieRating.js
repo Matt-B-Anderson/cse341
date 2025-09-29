@@ -23,14 +23,20 @@ const getById = async (req, res, next) => {
 
 const createMovieRating = async (req, res) => {
 	try {
+		const userId = req.user?._id;
+		const githubId = req.user?.githubId;
+
 		const movieRating = {
-			userName: req.body.userName,
-			movieType: req.body.movieType,
-			movieTitle: req.body.movieTitle,
-			watchDate: req.body.watchDate,
-			rating: req.body.rating,
-            movieGenre: req.body.movieGenre,
-            movieReleaseYear: req.body.movieReleaseYear
+  			userId,
+  			githubId,
+  			userName: req.user?.username || req.body.userName,
+  			movieType: req.body.movieType,
+  			movieTitle: req.body.movieTitle,
+  			watchDate: req.body.watchDate,
+  			rating: req.body.rating,
+  			movieGenre: req.body.movieGenre,
+  			movieReleaseYear: req.body.movieReleaseYear,
+  			createdAt: new Date()
 		};
 		const result = await mongodb
 			.getDb()
