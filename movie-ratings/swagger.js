@@ -5,7 +5,7 @@ const doc = {
         title: 'Movie Rating API',
         description: 'Simple API to rate movies'
     },
-    host: 'https://movierating-wakw.onrender.com/',
+    host: 'movierating-wakw.onrender.com',
     schemes: '[https]'
 }
 
