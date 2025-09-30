@@ -8,6 +8,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const passport = require('./auth');
 const jwt = require('jsonwebtoken');
+const cookieParser= require('cookie-parser');
 
 const port = process.env.PORT || 8080;
 const app = express();
@@ -42,19 +43,23 @@ app
         methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization']
     }))
+    .use(cookieParser())
     .use('/', require('./routes/index'));
 
 app.get('/', (req, res) => {
-    const authHeader = req.headers.authorization || '';
-    const [scheme, token] = authHeader.split(' ');
 
-    if (scheme === 'Bearer' && token) {
+    const authHeader = req.headers.authorization || '';
+    const [scheme, tokenFromHeader] = authHeader.split(' ');
+
+    const token = (scheme === 'Bearer' && tokenFromHeader) ? tokenFromHeader : req.cookies?.token;
+
+    if (token) {
         try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET, { issuer: 'movie-ratings-api' });
-        return res.send(`Logged in as ${decoded.username || decoded.githubId}`);
+            const decoded = jwt.verify(token, process.env.JWT_SECRET, { issuer: 'movie-ratings-api' });
+            return res.send(`Logged in as ${decoded.username || decoded.githubId}`);
         } catch (err) {
-        return res.status(401).send('Invalid or expired token');
-        }
+            return res.status(401).send('Invalid or expired token');
+        }   
     }
 
     res.send('Logged Out');

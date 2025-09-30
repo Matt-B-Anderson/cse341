@@ -1,6 +1,7 @@
 const routes = require('express').Router();
 const movieRating = require('./movieRating');
 const passport = require('passport');
+const jwt = require('jsonwebtoken');
 
 routes.use('/', require('./swagger'));
 routes.use('/movieRating', movieRating);
@@ -18,31 +19,27 @@ routes.get('/github/callback',
             issuer: 'movie-ratings-api'
         });
 
-        res.json({
-            token,
-            user: {
-                _id: req.user._id,
-                githubId: req.user.githubId,
-                username: req.user.username,
-                displayName: req.user.displayName,
-                avatarUrl: req.user.avatarUrl
-            },
-            expiresIn: process.env.JWT_EXPIRES_IN || '1h'
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: true,       
+            sameSite: 'lax',    
+            maxAge: 3600 * 1000 
         });
+
+        res.redirect('/');
     }
 );
 routes.get('/me', (req, res) => {
     const authHeader = req.headers.authorization || '';
-    const [scheme, token] = authHeader.split(' ');
+    const [scheme, bearer] = authHeader.split(' ');
+    const token = (scheme === 'Bearer' && bearer) ? bearer : req.cookies?.token;
 
-    if (scheme !== 'Bearer' || !token) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
+    if (!token) return res.status(401).json({ error: 'Unauthorized' });
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET, { issuer: 'movie-ratings-api' });
         res.json({ user: decoded });
-    } catch (err) {
+    } catch {
         res.status(401).json({ error: 'Invalid or expired token' });
     }
 });
@@ -54,6 +51,12 @@ routes.get('/logout', (req, res, next) => {
             res.redirect('/');
         });
     });
+});
+
+routes.get('/auth/token', (req, res) => {
+    const token = req.cookies?.token;
+    if (!token) return res.status(401).json({ error: 'No token cookie' });
+    return res.json({ token });
 });
 
 module.exports = routes;
