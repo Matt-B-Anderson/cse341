@@ -1,8 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongodb = require('./db/connect');
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json');
 const cors = require('cors');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
@@ -43,8 +41,6 @@ app
   }))
   .use(passport.initialize())
   .use(passport.session())
-  .use(express.static('public'))
-  .use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, { customJs: '/swagger-cred.js', explorer: true }))
   .use('/', require('./routes/index'));
 
 app.get('/', (req, res) => {
