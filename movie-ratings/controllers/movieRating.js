@@ -23,12 +23,8 @@ const getById = async (req, res, next) => {
 
 const createMovieRating = async (req, res) => {
 	try {
-		const userId = req.auth.sub;
-		const githubId = req.auth.githubId;
 
 		const movieRating = {
-            userId,
-  			githubId,
   			userName: req.user?.username || req.body.userName,
   			movieType: req.body.movieType,
   			movieTitle: req.body.movieTitle,
