@@ -22,7 +22,8 @@ routes.get('/github/callback',
         res.cookie('token', token, {
             httpOnly: true,
             secure: true,       
-            sameSite: 'lax',    
+            sameSite: 'none',
+            path: '/',    
             maxAge: 3600 * 1000 
         });
 
