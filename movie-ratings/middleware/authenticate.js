@@ -1,18 +1,16 @@
 const jwt = require('jsonwebtoken');
 
 const authenticateJWT = (req, res, next) => {
-    const hdr = req.headers.authorization || '';
-    const [scheme, token] = hdr.split(' ');
+    const authHeader = req.headers.authorization || '';
+    const [scheme, bearer] = authHeader.split(' ');
+    const token = (scheme === 'Bearer' && bearer) ? bearer : req.cookies?.token;
 
-    if (scheme !== 'Bearer' || !token) {
-        return res.status(401).json({ error: 'Missing or invalid Authorization header' });
-    }
+    if (!token) return res.status(401).json({ error: 'Missing auth token' });
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET, { issuer: 'movie-ratings-api' });
-        req.auth = decoded;
+        req.auth = jwt.verify(token, process.env.JWT_SECRET, { issuer: 'movie-ratings-api' });
         return next();
-    } catch (err) {
+    } catch {
         return res.status(401).json({ error: 'Invalid or expired token' });
     }
 };
