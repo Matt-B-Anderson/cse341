@@ -1,6 +1,6 @@
 const routes = require('express').Router();
 const movieRating = require('./movieRating');
-const passport = require('passport');
+const passport = require('../auth');
 const jwt = require('jsonwebtoken');
 
 routes.use('/', require('./swagger'));
