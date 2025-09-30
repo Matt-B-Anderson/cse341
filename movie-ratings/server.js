@@ -6,9 +6,8 @@ const swaggerDocument = require('./swagger.json');
 const cors = require('cors');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
-const passport = require('./auth'); // use configured passport
+const passport = require('./auth');
 const cookieParser = require('cookie-parser');
-const path = require('path');
 
 const port = process.env.PORT || 8080;
 const app = express();

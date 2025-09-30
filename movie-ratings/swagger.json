@@ -25,21 +25,8 @@
       "get": {
         "description": "",
         "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/me": {
-      "get": {
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -235,19 +222,5 @@
       }
     }
   },
-  "components": {
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
-      }
-    }
-  },
-  "description": "Simple API to rate movies",
-  "security": [
-    {
-      "bearerAuth": []
-    }
-  ]
+  "description": "Simple API to rate movies"
 }

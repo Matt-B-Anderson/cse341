@@ -6,12 +6,6 @@ const doc = {
     host: 'movierating-wakw.onrender.com',
     basePath: '/',
     schemes: ['https'],
-    components: {
-        securitySchemes: {
-        bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }
-        }
-    },
-    security: [{ bearerAuth: [] }]
 };
 
 const outputFile = './swagger.json';
