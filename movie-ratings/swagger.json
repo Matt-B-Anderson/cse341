@@ -25,8 +25,8 @@
       "get": {
         "description": "",
         "responses": {
-          "200": {
-            "description": "OK"
+          "default": {
+            "description": ""
           }
         }
       }
@@ -57,6 +57,19 @@
         "responses": {
           "default": {
             "description": ""
+          }
+        }
+      }
+    },
+    "/auth/token": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
