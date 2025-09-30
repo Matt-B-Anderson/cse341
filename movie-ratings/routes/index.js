@@ -6,7 +6,7 @@ routes.use('/', require('./swagger'));
 routes.use('/movieRating', movieRating);
 routes.get('/login', passport.authenticate('github'));
 routes.get('/github/callback',
-  passport.authenticate('github', { failureRedirect: '/api-docs' }),
+  passport.authenticate('github', { failureRedirect: '/' }),
   (req, res) => {
     res.redirect('/');
   }
