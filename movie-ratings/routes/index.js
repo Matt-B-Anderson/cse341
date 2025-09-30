@@ -19,17 +19,25 @@ routes.get('/github/callback',
             issuer: 'movie-ratings-api'
         });
 
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: true,       
-            sameSite: 'none',
-            path: '/',    
-            maxAge: 3600 * 1000 
-        });
-
-        res.redirect('/');
+        res.redirect(`/auth/finalize?token=${encodeURIComponent(token)}`);
     }
 );
+
+routes.get('/auth/finalize', (req, res) => {
+    const { token } = req.query;
+    if (!token) return res.status(400).send('Missing token');
+
+    res.cookie('token', token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        path: '/',
+        maxAge: 3600 * 1000
+    });
+
+    res.redirect('/');
+});
+
 routes.get('/me', (req, res) => {
     const authHeader = req.headers.authorization || '';
     const [scheme, bearer] = authHeader.split(' ');

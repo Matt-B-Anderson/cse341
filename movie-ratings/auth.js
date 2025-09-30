@@ -4,7 +4,7 @@ const { ObjectId } = require("mongodb");
 const mongodb = require("./db/connect");
 
 async function usersCol() {
-  return mongodb.getDb().db().collection("users");
+    return mongodb.getDb().db().collection("users");
 }
 
 passport.use(
