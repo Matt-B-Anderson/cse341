@@ -1,13 +1,18 @@
 const swaggerAutogen = require('swagger-autogen');
 
 const doc = {
-    info: {
-        title: 'Movie Rating API',
-        description: 'Simple API to rate movies'
-    },
+    info: { title: 'Movie Ratings API', version: '1.0.0' },
+    description: 'Simple API to rate movies',
     host: 'movierating-wakw.onrender.com',
-    schemes: '[https]'
-}
+    basePath: '/',
+    schemes: ['https'],
+    components: {
+        securitySchemes: {
+        bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }
+        }
+    },
+    security: [{ bearerAuth: [] }]
+};
 
 const outputFile = './swagger.json';
 const endpointFiles = ['./routes/index.js'];
