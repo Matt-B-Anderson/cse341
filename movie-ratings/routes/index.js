@@ -14,20 +14,24 @@ routes.get('/github/callback',
   }
 );
 
-routes.get('/me', (req, res) => {
-  if (!req.isAuthenticated || !req.isAuthenticated()) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-  const user = req.user || {};
-  res.json({
-    user: {
-      _id: user._id,
-      githubId: user.githubId,
-      username: user.username,
-      displayName: user.displayName,
-      avatarUrl: user.avatarUrl,
+routes.get('/github/callback', (req, res, next) => {
+  passport.authenticate('github', (err, user, info) => {
+    if (err) {
+      console.error('GitHub auth ERROR:', err);
+      return res.status(500).send('Auth error');
     }
-  });
+    if (!user) {
+      console.error('GitHub auth FAILED. info=', info);
+      return res.redirect('/login-failed');
+    }
+    req.logIn(user, (err) => {
+      if (err) {
+        console.error('Login (serialize) error:', err);
+        return res.status(500).send('Login error');
+      }
+      return res.redirect('/');
+    });
+  })(req, res, next);
 });
 
 routes.get('/login-failed', (_req, res) => res.status(401).send('Login failed'));
