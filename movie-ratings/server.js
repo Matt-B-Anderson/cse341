@@ -7,6 +7,7 @@ const cors = require('cors');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const passport = require('./auth');
+const jwt = require('jsonwebtoken');
 
 const port = process.env.PORT || 8080;
 const app = express();
@@ -25,9 +26,9 @@ app
     saveUninitialized: false,
     store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
     cookie: {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'none'
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none'
     } 
     }))
     .use(passport.initialize())
@@ -43,7 +44,21 @@ app
     }))
     .use('/', require('./routes/index'));
 
-app.get('/', (req, res) => {res.send(req.session.user !== undefined ? `Logged in as ${req.session.user.displayName}` : "Logged Out")});
+app.get('/', (req, res) => {
+    const authHeader = req.headers.authorization || '';
+    const [scheme, token] = authHeader.split(' ');
+
+    if (scheme === 'Bearer' && token) {
+        try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET, { issuer: 'movie-ratings-api' });
+        return res.send(`Logged in as ${decoded.username || decoded.githubId}`);
+        } catch (err) {
+        return res.status(401).send('Invalid or expired token');
+        }
+    }
+
+    res.send('Logged Out');
+});
 
 mongodb.initDb((err, mongodb) => {
     if (err) {

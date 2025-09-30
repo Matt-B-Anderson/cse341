@@ -32,8 +32,19 @@ routes.get('/github/callback',
     }
 );
 routes.get('/me', (req, res) => {
-    if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
-    res.json(req.user);
+    const authHeader = req.headers.authorization || '';
+    const [scheme, token] = authHeader.split(' ');
+
+    if (scheme !== 'Bearer' || !token) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET, { issuer: 'movie-ratings-api' });
+        res.json({ user: decoded });
+    } catch (err) {
+        res.status(401).json({ error: 'Invalid or expired token' });
+    }
 });
 routes.get('/logout', (req, res, next) => {
     req.logout?.(err => {

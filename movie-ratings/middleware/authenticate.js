@@ -10,7 +10,7 @@ const authenticateJWT = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET, { issuer: 'movie-ratings-api' });
-        req.auth = decoded; // { sub, githubId, username, iat, exp, iss }
+        req.auth = decoded;
         return next();
     } catch (err) {
         return res.status(401).json({ error: 'Invalid or expired token' });
