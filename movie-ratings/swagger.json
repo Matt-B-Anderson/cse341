@@ -245,9 +245,6 @@
             "schema": {
               "type": "object",
               "properties": {
-                "movieId": {
-                  "example": "any"
-                },
                 "title": {
                   "example": "any"
                 },
@@ -281,7 +278,7 @@
       }
     },
     "/watchlist/{id}": {
-      "patch": {
+      "put": {
         "description": "",
         "parameters": [
           {
