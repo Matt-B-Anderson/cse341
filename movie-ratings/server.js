@@ -1,46 +1,60 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongodb = require('./db/connect');
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json');
 const cors = require('cors');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const passport = require('./auth');
+const cookieParser = require('cookie-parser');
 
 const port = process.env.PORT || 8080;
 const app = express();
 
+app.set('trust proxy', 1);
+const allowedOrigins = [
+  `https://${process.env.RENDER_EXTERNAL_HOSTNAME || ''}`.replace(/\/+$/,''),
+];
+app.use(cors({
+  origin: (origin, cb) => {
+    if (!origin) return cb(null, true);
+    return cb(null, allowedOrigins.includes(origin));
+  },
+  methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
+
 app
-    .use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
-    .use(bodyParser.json())
-    .use(session({
+  .use(bodyParser.json())
+  .use(cookieParser())
+  .use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI })
+    saveUninitialized: true,
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+    cookie: {
+      httpOnly: true,
+      secure: true,      
+      sameSite: 'lax',   
+      path: '/'
+    }
   }))
-    .use(passport.initialize())
-    .use(passport.session())
-    .use(cors({methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH']}))
-    .use(cors({origin: '*'}))
-    .use('/', require('./routes/index'));
+  .use(passport.initialize())
+  .use(passport.session())
+  .use('/', require('./routes/index'));
 
-app.get('/', (req, res) => {res.send(req.session.user !== undefined ? `Logged in as ${req.session.user.displayName}` : "Logged Out")});
-
-app.get('/github/callback', passport.authenticate('github', {
-  failureRedirect: '/api-docs', session: false}),
-  (req, res) => {
-    req.session.user = req.user;
-    res.redirect('/');
+app.get('/', (req, res) => {
+  if (req.isAuthenticated && req.isAuthenticated()) {
+    const name = req.user?.displayName || req.user?.username || 'user';
+    return res.send(`Logged in as ${name}`);
   }
-);
+  res.send('Logged Out');
+});
 
-mongodb.initDb((err, mongodb) => {
+mongodb.initDb((err) => {
   if (err) {
-    console.log(err);
+    console.error(err);
   } else {
-    app.listen(port);
-    console.log(`Connected to DB and listening on ${port}`);
+    app.listen(port, () => console.log(`Connected to DB and listening on ${port}`));
   }
 });
