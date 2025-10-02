@@ -1,5 +1,4 @@
-const express = require('express');
-const router = express.Router();
+const router = require('express').Router();
 const movieRatingController = require('../controllers/movieRating');
 const {isAuthenticated} = require("../middleware/authenticate");
 

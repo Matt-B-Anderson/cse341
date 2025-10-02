@@ -4,7 +4,7 @@ const mongodb = require('../db/connect');
 
 const getCollection = () => mongodb.getDb().db().collection('watchlist');
 
-exports.list = async (req, res) => {
+const getList = async (req, res) => {
   try {
     const col = getCollection();
     const items = await col
@@ -17,17 +17,16 @@ exports.list = async (req, res) => {
   }
 };
 
-exports.create = async (req, res) => {
+const create = async (req, res) => {
   try {
-    const { movieId, title, status = 'planned', notes = '' } = req.body || {};
-    if (!movieId || !title) {
-      return res.status(400).json({ error: 'movieId and title are required' });
+    const {title, status = 'planned', notes = '' } = req.body || {};
+    if (!title) {
+      return res.status(400).json({ error: 'title are required' });
     }
 
     const now = new Date();
     const doc = {
       userId: new ObjectId(req.user._id),
-      movieId: String(movieId),
       title: String(title),
       status,
       notes,
@@ -37,7 +36,7 @@ exports.create = async (req, res) => {
 
     const col = getCollection();
     const result = await col.updateOne(
-      { userId: doc.userId, movieId: doc.movieId },
+      { userId: doc.userId },
       { $setOnInsert: doc },
       { upsert: true }
     );
@@ -55,7 +54,7 @@ exports.create = async (req, res) => {
   }
 };
 
-exports.update = async (req, res) => {
+const update = async (req, res) => {
   try {
     const _id = new ObjectId(req.params.id);
     const { status, notes } = req.body || {};
@@ -80,7 +79,7 @@ exports.update = async (req, res) => {
   }
 };
 
-exports.remove = async (req, res) => {
+const remove = async (req, res) => {
   try {
     const _id = new ObjectId(req.params.id);
     const col = getCollection();
@@ -92,7 +91,7 @@ exports.remove = async (req, res) => {
   }
 };
 
-exports.stats = async (req, res) => {
+const getStats = async (req, res) => {
   try {
     const col = getCollection();
     const agg = await col.aggregate([
@@ -106,3 +105,6 @@ exports.stats = async (req, res) => {
     res.status(500).json({ error: String(e) });
   }
 };
+
+
+module.exports = { getList, create, update, remove, getStats}
