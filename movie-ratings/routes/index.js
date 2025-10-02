@@ -5,6 +5,7 @@ const passport = require('passport');
 routes.use('/', require('./swagger'));
 routes.use('/movieRating', movieRating);
 routes.get('/login', passport.authenticate('github'));
+routes.use('/watchlist', watchlist);
 routes.get('/github/callback',
   passport.authenticate('github', { failureRedirect: '/api-docs' }),
   (req, res) => {
