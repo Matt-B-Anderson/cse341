@@ -1,10 +1,10 @@
 const routes = require('express').Router();
 const movieRating = require('./movieRating');
 const passport = require('../auth');
+const watchlist = require('./watchlist');
 
 routes.use('/', require('./swagger'));
 routes.use('/movieRating', movieRating);
-
 routes.get('/login', passport.authenticate('github'));
 routes.use('/watchlist', watchlist);
 routes.get('/github/callback',
